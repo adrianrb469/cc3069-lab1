@@ -30,11 +30,11 @@ int main()
             float pi = approximate_pi(n);
             float error = std::abs(pi - M_PI);
 
-            std::cout << std::setw(12) << n 
-                      << std::setw(20) << std::setprecision(10) << pi 
+            std::cout << std::setw(12) << n
+                      << std::setw(20) << std::setprecision(10) << pi
                       << std::setw(20) << std::setprecision(10) << error << std::endl;
         }
-        catch (const std::exception& e)
+        catch (const std::exception &e)
         {
             std::cerr << "Error for n = " << n << ": " << e.what() << std::endl;
         }
