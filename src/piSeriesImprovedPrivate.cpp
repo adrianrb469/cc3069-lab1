@@ -4,24 +4,23 @@
 #include <vector>
 #include <omp.h>
 
-float approximate_pi(int n, int thread_count)
+double approximate_pi(long long n, int thread_count)
 {
     double sum = 0.0;
-#pragma omp parallel for num_threads(thread_count) reduction(+ : sum)
-    for (int k = 0; k < n; k++)
+    double factor;
+#pragma omp parallel for num_threads(thread_count) reduction(+ : sum) private(factor)
+    for (long long k = 0; k < n; k++)
     {
-        double factor = (k % 2 == 0) ? 1.0 : -1.0;
+        factor = (k % 2 == 0) ? 1.0 : -1.0;
         sum += factor / (2 * k + 1);
     }
-    float pi_approx = 4.0 * sum;
-
-    return pi_approx;
+    return 4.0 * sum;
 }
 
 int main()
 {
-    std::vector<int> iterations = {10000000,10000000,10000000,100000000,1000000000};
-    std::vector<int> thread_counts = {2, 4, 8, 10, 16};
+    std::vector<long long int> iterations = {1000000, 10000000, 100000000,1000000000};
+    std::vector<int> thread_counts = {1, 2, 4, 8, 10, 16};
 
     std::cout << std::setw(12) << "Iterations" << std::setw(12) << "Threads"
               << std::setw(20) << "Approximation" << std::setw(20) << "Error"
@@ -48,7 +47,7 @@ int main()
                           << std::setw(20) << std::setprecision(6) << elapsed_time << std::endl;
             }
             catch (const std::exception &e)
-            { 
+            {
                 std::cerr << "Error for n = " << n << ", threads = " << threads << ": " << e.what() << std::endl;
             }
         }
