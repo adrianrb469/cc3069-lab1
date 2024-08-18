@@ -6,25 +6,24 @@
 
 float approximate_pi(int n, int thread_count)
 {
+    double factor = 1.0;
     double sum = 0.0;
-#pragma omp parallel num_threads(thread_count)
+#pragma omp parallel for num_threads(thread_count) \
+    reduction(+ : sum)
+    for (int k = 0; k < n; k++)
     {
-        double factor = 1.0;
-#pragma omp for reduction(+ : sum)
-        for (int k = 0; k < n; k++)
-        {
-            sum += factor / (2 * k + 1);
-            factor = -factor;
-        }
+        sum += factor / (2 * k + 1);
+        factor = -factor;
     }
+    float pi_approx = 4.0 * sum;
 
-    return 4.0 * sum;
+    return pi_approx;
 }
 
 int main()
 {
     std::vector<int> iterations = {1000, 10000, 100000, 1000000, 10000000};
-    std::vector<int> thread_counts = {2, 4, 6, 8, 10}; 
+    std::vector<int> thread_counts = {2, 4, 6, 8, 10};
 
     std::cout << std::setw(12) << "Iterations" << std::setw(12) << "Threads"
               << std::setw(20) << "Approximation" << std::setw(20) << "Error"
